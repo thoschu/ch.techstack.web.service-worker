@@ -1,0 +1,36 @@
+{
+  "name": "io.server360.web.service-worker",
+  "version": "1.0.0",
+  "description": "https://serviceworke.rs/",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "grunt": "grunt"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thoschu/io.server360.web.service-worker.git"
+  },
+  "keywords": [
+    "javascript",
+    "servive-worker"
+  ],
+  "author": "Tom S. <thoschu@gmail.com> (https://www.thomas-schulte.de)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/thoschu/io.server360.web.service-worker/issues"
+  },
+  "homepage": "https://github.com/thoschu/io.server360.web.service-worker#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "grunt": "^1.0.3",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-cssmin": "^2.2.1",
+    "grunt-contrib-jshint": "^1.1.0",
+    "grunt-contrib-nodeunit": "^2.0.0",
+    "grunt-contrib-uglify": "^3.3.0",
+    "grunt-contrib-watch": "^1.1.0",
+    "jshint-stylish": "^2.2.1",
+    "load-grunt-tasks": "^4.0.0"
+  }
+}

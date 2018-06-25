@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/thoschu/io.server360.web.service-worker#readme",
   "dependencies": {
+    "pm2": "^2.10.4",
     "ramda": "^0.25.0",
     "websocket": "^1.0.26"
   },

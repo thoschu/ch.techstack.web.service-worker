@@ -34,6 +34,19 @@
         <script>
             var elem = document.getElementById('result');
 
+
+            var connection = new WebSocket('ws://localhost:8080/', ['soap', 'xmpp']);
+
+            connection.onopen = function () {
+                // connection is opened and ready to use
+                console.log('#####');
+            };
+
+            connection.onerror = function (error) {
+                // an error occurred when sending/receiving data
+                console.log('******');
+            };
+
             if (Modernizr.serviceworker) {
                 elem.innerHTML = 'Dieser Browser unterstützt keine Service Worker.';
             } else {
@@ -41,6 +54,13 @@
 
                 if ('serviceWorker' in navigator) {
                     window.addEventListener('load', function () {
+                        this.onpush = function(event) {
+                            console.log(event.data);
+                            // From here we can write the data to IndexedDB, send it to any open
+                            // windows, display a notification, etc.
+                        }
+
+
                         navigator.serviceWorker.register('./sw.js', {scope: './'}).then(function (registration) {
                             // Registration was successful
                             console.log('ServiceWorker registration successful with scope: ', registration.scope);

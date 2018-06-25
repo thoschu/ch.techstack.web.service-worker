@@ -1,9 +1,7 @@
-var version = 'v1.0.3::';
+var version = 'v1.0.14::';
 
 self.addEventListener('install', function (event) {
-    var cachePromise = caches.open(version + 'site-cache-v1');
-
-    event.waitUntil(cachePromise
+    event.waitUntil(caches.open(version + 'site-cache-beta')
         .then(function (cache) {
             console.log('Opened cache');
             return cache.addAll([
@@ -11,11 +9,32 @@ self.addEventListener('install', function (event) {
                 './css/main.css',
                 './js/test.js'
             ]);
-        }).then(function (cache) {
+        }).then(function () {
             console.log('SERVICE WORKER: install completed');
-            return cache;
+
+
+
+
+            return self.skipWaiting();
         }).catch(function (err) {
             console.log(err);
+        })
+    );
+});
+
+self.addEventListener("activate", function (event) {
+    console.log('WORKER: activate event in progress.');
+
+    event.waitUntil(
+        caches.keys().then(function (keys) {
+            console.log(keys);
+            return Promise.all(keys.filter(function (key) {
+                return !key.startsWith(version);
+            }).map(function (key) {
+                return caches.delete(key);
+            }));
+        }).then(function () {
+            console.log('WORKER: activate completed.');
         })
     );
 });
@@ -36,34 +55,23 @@ self.addEventListener('fetch', function (event) {
         } else {
             event.respondWith(
                 caches.match(event.request).then(function (response) {
-                    console.log(event.request);
-                    console.log(response);
-
                     // Cache hit - return response
                     if (response) {
-                        console.log(">>>>>>>");
-                        console.log(response);
-
                         return response;
                     } else {
-                        console.log("!!!!!!!!");
-
                         fetch(event.request).then(function (response) {
-
                             console.log('WORKER: fetch response from network.', event.request.url);
+                            var eventRequest = event.request;
                             var cacheCopy = response.clone();
-                            var pagesPromise = caches.open(version + 'pages');
-
-                            pagesPromise.then(function add(cache) {
-                                cache.put(event.request, cacheCopy);
-                                return cache;
-                            }).then(function (cache) {
+                            caches.open(version + 'pages').then(function (cache) {
+                                cache.put(eventRequest, cacheCopy);
+                                return;
+                            }).then(function () {
                                 console.log('WORKER: fetch response stored in cache.', event.request.url);
-                                return fetch(event.request);
                             });
                         });
 
-                        //return fetch(event.request);
+                        return fetch(event.request);
                     }
                 }).catch((err) => {
                     console.error('WORKER: fetch request failed in both cache and network: ', err);
@@ -78,22 +86,4 @@ self.addEventListener('fetch', function (event) {
             );
         }
     }
-});
-
-self.addEventListener("activate", function (event) {
-    console.log('WORKER: activate event in progress.');
-
-    event.waitUntil(
-        caches.keys().then(function (keys) {
-            var promises = keys.filter(function (key) {
-                return !key.startsWith(version);
-            }).map(function (key) {
-                return caches.delete(key);
-            });
-
-            return Promise.all(promises);
-        }).then(function () {
-            console.log('WORKER: activate completed.');
-        })
-    );
 });

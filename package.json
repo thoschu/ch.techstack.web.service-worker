@@ -4,6 +4,7 @@
   "description": "https://serviceworke.rs/",
   "main": "index.js",
   "scripts": {
+    "start": "node index",
     "test": "grunt nodeunit",
     "grunt": "grunt"
   },
@@ -21,7 +22,10 @@
     "url": "https://github.com/thoschu/io.server360.web.service-worker/issues"
   },
   "homepage": "https://github.com/thoschu/io.server360.web.service-worker#readme",
-  "dependencies": {},
+  "dependencies": {
+    "ramda": "^0.25.0",
+    "websocket": "^1.0.26"
+  },
   "devDependencies": {
     "grunt": "^1.0.3",
     "grunt-cli": "^1.2.0",

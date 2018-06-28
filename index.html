@@ -17,10 +17,18 @@
         </header>
         <main>
             <section>
-                <img src="./offline/foo.bar">
+                <img src="./img/online/online.png">
+            </section>
+            <section>
+                <img src="./img/foo.bar">
             </section>
             <section>
                 <p id="result"></p>
+            </section>
+            <section>
+                <div id="connectionStatus"></div>
+                <p>Click on the button below to make an HTTP request.<p>
+                <button id="requestButton">Make an HTTP request - do it!</button>
             </section>
         </main>
         <footer>
@@ -42,56 +50,55 @@
                 elem.innerHTML = 'Dieser Browser unterstützt keine Service Worker.';
             } else {
                 elem.innerHTML = 'Dieser Browser unterstützt Service Worker.';
+                // if ('serviceWorker' in navigator) {...} else {....}
+                window.addEventListener('load', function () {
+                    navigator.serviceWorker.register('./sw.js', {scope: './'}).then(registration => navigator.serviceWorker.ready).then(function (registration) {
+                        console.log('ServiceWorker registration successful with scope: ', registration.scope);
 
-                if ('serviceWorker' in navigator) {
-                    window.addEventListener('load', function () {
-                        navigator.serviceWorker.register('./sw.js', {scope: './'}).then(function (registration) {
-                            // Registration was successful
-                            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-
-                            navigator.serviceWorker.addEventListener("message", (evt) => {
-                                console.log(`Nachricht vom SW: ${ evt.data }`);
-                            });
-                        }).catch(function (err) {
-                            // registration failed :(
-                            console.log('ServiceWorker registration failed: ', err);
+                        navigator.serviceWorker.addEventListener("message", (evt) => {
+                            console.log(`Nachricht vom SW: ${ evt.data }`);
                         });
 
-                    });
-                } else {
-                    console.log('ServiceWorker registration failed!!!');
-                }
+                        if ('SyncManager' in window) {
+                            // 1. warten bis der SW aktiv ist
+                            navigator.serviceWorker.ready.then((swRegistration) => {
 
-                if ('serviceWorker' in navigator && 'SyncManager' in window) {
+                                document.getElementById('requestButton').addEventListener('click', () => {
+                                    swRegistration.sync.register('image-fetch').then(() => {
+                                        console.log('Sync registered');
+                                    });
+                                });
 
-                    // 1. warten bis der SW aktiv ist
-                    navigator.serviceWorker.ready.then((swRegistration) => {
 
-                        // 2. Zugriff auf aktiven SW erhalten
-                        if (swRegistration.active) {
-                            // 3. Nachricht senden
-                            swRegistration.active.postMessage(23);
+                                // 2. Zugriff auf aktiven SW erhalten
+                                if (swRegistration.active) {
+                                    // 3. Nachricht senden
+                                    swRegistration.active.postMessage(23);
+                                }
+
+                                // 4. Zugriff auf SW für bereits installiertes Update erhalten
+                                if (swRegistration.waiting) {
+                                    // 5. Nachricht senden
+                                    swRegistration.waiting.postMessage(42);
+                                }
+
+                                return swRegistration.sync.register('event-x');
+                            }).catch(function (err) {
+                                console.error('SyncManager registration failed!', err);
+                                // system was unable to register for a sync,
+                                // this could be an OS-level restriction
+                                // postDataFromThePage();
+                            });
+                        } else {
+                            console.log('Browser does not support SyncManager!');
+                            // serviceworker/sync not supported
+                            // postDataFromThePage();
                         }
-
-                        // 4. Zugriff auf SW für bereits installiertes Update erhalten
-                        if (swRegistration.waiting) {
-                            // 5. Nachricht senden
-                            swRegistration.waiting.postMessage(42);
-                        }
-
-                        return swRegistration.sync.register('eventx');
                     }).catch(function (err) {
-                        console.log('SyncManager registration failed for eventx!!!');
-                        console.error(err);
-                        // system was unable to register for a sync,
-                        // this could be an OS-level restriction
-                        // postDataFromThePage();
+                        // registration failed :(
+                        console.log('ServiceWorker registration failed: ', err);
                     });
-                } else {
-                    console.log('SyncManager registration failed!!!');
-                    // serviceworker/sync not supported
-                    // postDataFromThePage();
-                }
+                });
             }
         </script>
     </body>

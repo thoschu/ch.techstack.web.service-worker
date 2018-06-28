@@ -99,7 +99,6 @@ self.addEventListener('fetch', function (event) {
     }
 });
 
-
 self.addEventListener('sync', (event) => {
     if (event.tag === 'image-fetch') {
         event.waitUntil(function () {
@@ -112,7 +111,7 @@ self.addEventListener('sync', (event) => {
             });
         });
     }
-    
+
     if (event.tag == 'eventx') {
         event.waitUntil(doSomething());
     }

@@ -4,6 +4,8 @@ const os = require('os');
 const R = require('ramda');
 const webSocket = require('websocket');
 
+// import {B, myName, getJob} from 'serverConfig';
+
 if (cluster.isMaster) {
     const numCPUs = os.cpus();
     console.log(`Master ${process.pid} is running`);
@@ -17,6 +19,7 @@ if (cluster.isMaster) {
         console.log(`${code}: worker ${worker.process.pid} died with signal: ${signal}`);
     });
 } else {
+
 
     // const WebSocketServer = webSocket.server;
     //
@@ -75,5 +78,6 @@ if (cluster.isMaster) {
     }).listen(8088); //the server object listens on port 8088
 
     console.log(`Worker ${process.pid} started`);
+    // console.info(`Greetz from ${myName} - (${getJob()}) - ${B.town}`);
 
 }

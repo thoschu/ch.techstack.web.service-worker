@@ -1,2 +1,2 @@
-# io.server360.web.service-worker
+# ch.techstack.web.service-worker
 https://serviceworke.rs/
